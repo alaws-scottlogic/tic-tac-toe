@@ -30,36 +30,40 @@ function checkDraw(squares){
     return true;
 }
 
-function Square({ id, value, onSquareClick, highlighted }) {
-  let color,bgColor;
-  if(highlighted==='win'){
-    color = "black";
-    bgColor = "#adf7b6";
+function setTextColor(letter,status){
+  if(status){
+    return "black";
   }
-  else if(highlighted==='O'){
-    color = "black";
-    bgColor = "#79addc";
+  if(letter==="X"){
+    return "#ffc09f";
   }
-  else if(highlighted==='X'){
-    color = "black";
-    bgColor = "#ffc09f";
+  else{
+    return "#79addc";
   }
-  else if(value==='O'){
-    color = "#79addc";
-    bgColor = "white";
+}
+
+function setBackgroundColor(status){
+  if(status==='win'){
+    return "#adf7b6";
   }
-  else if(value==='X'){
-    color = "#ffc09f";
-    bgColor = "white";
+  else if (status==='X'){
+    return "#ffc09f";
   }
+  else if (status==='O'){
+    return "#79addc";
+  }
+  return "white";
+}
+
+function Square({ id, letter, onSquareClick, status }) {
   return (
-    <button id={id} className="square" onClick={onSquareClick} style={{ background: bgColor, color: color }}>
-      {value}
+    <button id={id} className="square" onClick={onSquareClick} style={{ background: setBackgroundColor(status), color: setTextColor(letter,status) }}>
+      {letter}
     </button>
   );
 }
 
-function Board({ xIsNext, squares, onPlay,highlighted }) {
+function Board({ xIsNext, squares, onPlay,status }) {
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]||checkDraw(squares)) {
       return;
@@ -74,44 +78,44 @@ function Board({ xIsNext, squares, onPlay,highlighted }) {
   }
   const draw = checkDraw(squares);
   const winner = calculateWinner(squares);
-  let status;
+  let gameStatus;
   if (winner) {
     for(var i=0;i<winner.length;i++){
-      highlighted[winner[i]]='win';
+      status[winner[i]]='win';
     }
-    status = 'Winner: ' + squares[winner[0]];
+    gameStatus = 'Winner: ' + squares[winner[0]];
   } 
   else if(draw){
-    status = 'Draw';
-    highlighted=squares;
+    gameStatus = 'Draw';
+    status=squares;
   }
   else {
-    status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+    gameStatus = 'Next player: ' + (xIsNext ? 'X' : 'O');
   }
   return (
     <div>
-      <div className="status">{status}</div>
+      <div className="gameStatus">{gameStatus}</div>
       <div className="board-row">
-        <Square id={'square0'} value={squares[0]} onSquareClick={() => handleClick(0)} highlighted={highlighted[0]}/>
-        <Square id={'square1'} value={squares[1]} onSquareClick={() => handleClick(1)} highlighted={highlighted[1]}/>
-        <Square id={'square2'} value={squares[2]} onSquareClick={() => handleClick(2)} highlighted={highlighted[2]}/>
+        <Square id={'square0'} letter={squares[0]} onSquareClick={() => handleClick(0)} status={status[0]}/>
+        <Square id={'square1'} letter={squares[1]} onSquareClick={() => handleClick(1)} status={status[1]}/>
+        <Square id={'square2'} letter={squares[2]} onSquareClick={() => handleClick(2)} status={status[2]}/>
       </div>
       <div className="board-row">
-        <Square id={'square3'} value={squares[3]} onSquareClick={() => handleClick(3)} highlighted={highlighted[3]}/>
-        <Square id={'square4'} value={squares[4]} onSquareClick={() => handleClick(4)} highlighted={highlighted[4]}/>
-        <Square id={'square5'} value={squares[5]} onSquareClick={() => handleClick(5)} highlighted={highlighted[5]}/>
+        <Square id={'square3'} letter={squares[3]} onSquareClick={() => handleClick(3)} status={status[3]}/>
+        <Square id={'square4'} letter={squares[4]} onSquareClick={() => handleClick(4)} status={status[4]}/>
+        <Square id={'square5'} letter={squares[5]} onSquareClick={() => handleClick(5)} status={status[5]}/>
       </div>
       <div className="board-row">
-        <Square id={'square6'} value={squares[6]} onSquareClick={() => handleClick(6)} highlighted={highlighted[6]}/>
-        <Square id={'square7'} value={squares[7]} onSquareClick={() => handleClick(7)} highlighted={highlighted[7]}/>
-        <Square id={'square8'} value={squares[8]} onSquareClick={() => handleClick(8)} highlighted={highlighted[8]}/>
+        <Square id={'square6'} letter={squares[6]} onSquareClick={() => handleClick(6)} status={status[6]}/>
+        <Square id={'square7'} letter={squares[7]} onSquareClick={() => handleClick(7)} status={status[7]}/>
+        <Square id={'square8'} letter={squares[8]} onSquareClick={() => handleClick(8)} status={status[8]}/>
       </div>
     </div>
   );
 }
 
 export default function Game() {
-  const highlighted = Array(9).fill(null);
+  const status = Array(9).fill(null);
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove,setCurrentMove] = useState(0)
   const currentSquares = history[currentMove];
@@ -146,7 +150,7 @@ export default function Game() {
   return (
     <div className="game">
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} highlighted={highlighted} />
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} status={status} />
       </div>
       <div className="game-info">
         <ol>{moves}</ol>
