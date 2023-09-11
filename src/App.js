@@ -79,7 +79,7 @@ function Board({ xIsNext, squares, onPlay,highlighted }) {
     for(var i=0;i<winner.length;i++){
       highlighted[winner[i]]='win';
     }
-    status = 'Winner: ' + winner[0];
+    status = 'Winner: ' + squares[winner[0]];
   } 
   else if(draw){
     status = 'Draw';
