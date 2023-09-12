@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import React from 'react';
+import ConfettiExplosion from 'react-confetti-explosion';
 
 function calculateWinner(squares) {
   const lines = [
@@ -32,7 +33,7 @@ function checkDraw(squares){
 
 function setTextColor(letter,status){
   if(status){
-    return "black";
+    return "white";
   }
   if(letter==="X"){
     return "#ffc09f";
@@ -44,7 +45,7 @@ function setTextColor(letter,status){
 
 function setBackgroundColor(status){
   if(status==='win'){
-    return "#adf7b6";
+    return "#3deb94";
   }
   else if (status==='X'){
     return "#ffc09f";
@@ -63,18 +64,20 @@ function Square({ id, letter, onSquareClick, status }) {
   );
 }
 
-function Board({ xIsNext, squares, onPlay,status }) {
+function Board({ xIsNext, squares, onPlay,status}) {
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]||checkDraw(squares)) {
       return;
     }
+    let player;
     const nextSquares = squares.slice();
     if (xIsNext) {
-      nextSquares[i] = 'X';
+      player='X'
     } else {
-      nextSquares[i] = 'O';
+      player='O';
     }
-    onPlay(nextSquares);
+    nextSquares[i] = player;
+    onPlay(nextSquares,player,i);
   }
   const draw = checkDraw(squares);
   const winner = calculateWinner(squares);
@@ -83,7 +86,7 @@ function Board({ xIsNext, squares, onPlay,status }) {
     for(var i=0;i<winner.length;i++){
       status[winner[i]]='win';
     }
-    gameStatus = 'Winner: ' + squares[winner[0]];
+    gameStatus = 'Winner: ' + squares[winner[0]]; 
   } 
   else if(draw){
     gameStatus = 'Draw';
@@ -92,39 +95,45 @@ function Board({ xIsNext, squares, onPlay,status }) {
   else {
     gameStatus = 'Next player: ' + (xIsNext ? 'X' : 'O');
   }
+  const rowCount = 3, colCount = 3;
   return (
     <div>
-      <div className="gameStatus">{gameStatus}</div>
-      <div className="board-row">
-        <Square id={'square0'} letter={squares[0]} onSquareClick={() => handleClick(0)} status={status[0]}/>
-        <Square id={'square1'} letter={squares[1]} onSquareClick={() => handleClick(1)} status={status[1]}/>
-        <Square id={'square2'} letter={squares[2]} onSquareClick={() => handleClick(2)} status={status[2]}/>
+      <div className="game-status">{gameStatus}</div>
+      {winner && <ConfettiExplosion />}
+      <div>
+        {[...new Array(rowCount)].map((x, rowIndex) => {
+          return (
+            <div className="board-row" key={rowIndex}>
+              {[...new Array(colCount)].map((y, colIndex) => {
+                  const position = rowIndex * colCount + colIndex
+                  return <Square id={'square'+{position}} letter={squares[position]} onSquareClick={() => handleClick(position)} status={status[position]} />
+                }
+              )}
+            </div>
+          )
+        })
+      }
       </div>
-      <div className="board-row">
-        <Square id={'square3'} letter={squares[3]} onSquareClick={() => handleClick(3)} status={status[3]}/>
-        <Square id={'square4'} letter={squares[4]} onSquareClick={() => handleClick(4)} status={status[4]}/>
-        <Square id={'square5'} letter={squares[5]} onSquareClick={() => handleClick(5)} status={status[5]}/>
-      </div>
-      <div className="board-row">
-        <Square id={'square6'} letter={squares[6]} onSquareClick={() => handleClick(6)} status={status[6]}/>
-        <Square id={'square7'} letter={squares[7]} onSquareClick={() => handleClick(7)} status={status[7]}/>
-        <Square id={'square8'} letter={squares[8]} onSquareClick={() => handleClick(8)} status={status[8]}/>
-      </div>
-    </div>
+  </div>
   );
 }
 
 export default function Game() {
   const status = Array(9).fill(null);
   const [history, setHistory] = useState([Array(9).fill(null)]);
-  const [currentMove,setCurrentMove] = useState(0)
+  const [moveHistory, setMoveHistory] = useState([Array(9).fill(null)]);
+  const [currentMove,setCurrentMove] = useState(0);
   const currentSquares = history[currentMove];
   const xIsNext = currentMove % 2 === 0;
-  function handlePlay(nextSquares) {
+  function handlePlay(nextSquares,player,location) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     setHistory(nextHistory);
+    const nextMoveHistory = moveHistory.slice(0, currentMove + 1);
+    nextMoveHistory.push([player,location+1]);
+    setMoveHistory(nextMoveHistory);
     setCurrentMove(nextHistory.length - 1);
   }
+
   function jumpTo(nextMove){
     setCurrentMove(nextMove);
   }
@@ -142,19 +151,32 @@ export default function Game() {
     }
     return(
       <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
+        <button className="selectMove" onClick={() => jumpTo(move)}>{description}</button>
       </li>
     );
   });
-
+  const moveLocations = moveHistory.map((move, count)=>{
+    var description = "Player "+move[0]+" placed a tile in square "+move[1];
+    if(move[0]){
+      return(
+      <li key={move}>{description}</li>
+    );
+    }
+    
+  });
   return (
     <div className="game">
+      <div className="game-info">
+        <h2>Move History</h2>
+        <ol>{moveLocations}</ol>
+      </div>
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} status={status} />
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} status={status}/>
       </div>
       <div className="game-info">
         <ol>{moves}</ol>
       </div>
+      
     </div>
   );
 }

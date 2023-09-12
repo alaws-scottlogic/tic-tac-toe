@@ -6,8 +6,15 @@ body {
   font-family: sans-serif;
   margin: 20px;
   padding: 0;
+  background-color: aliceblue;
+  
 }
-
+#root{
+  background-color: aliceblue;
+}
+ol{
+  list-style-type: none;
+}
 h1 {
   margin-top: 0;
   font-size: 22px;
@@ -60,15 +67,16 @@ body {
   background: #fff;
   border: 1px solid #999;
   float: left;
-  font-size: 24px;
+  font-size: 140px;
   font-weight: bold;
   line-height: 34px;
-  height: 34px;
+  height: 150px;
+  margin: auto;
   margin-right: -1px;
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 34px;
+  width: 150px;
 }
 
 .board-row:after {
@@ -77,14 +85,45 @@ body {
   display: table;
 }
 
-.status {
+.gameStatus {
   margin-bottom: 10px;
+}
+.selectMove{
+  background:#79addc;
+  color:white;
+  width: 90%;
+  font-size: 20px;
+  margin: 15px;
+  border-radius: 30px;
+  border: none;
+  padding: 10px;
+}
+.selectMove:hover{
+  background:#ffc09f;
+  color:white;
+}
+.nextMove{
+  position: relative;
+  left: 30px;
+  bottom: 50%;
 }
 .game {
   display: flex;
   flex-direction: row;
+  margin: auto;
+  text-align: center;
+}
+.game_board {
+  margin: auto;
+  width: 50%;
+  
+}
+.game-status{
+  font-size:20px;
+  padding: 10px;
 }
 
 .game-info {
   margin-left: 20px;
+  width: 25%;
 }
