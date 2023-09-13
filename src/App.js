@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import React from 'react';
 import ConfettiExplosion from 'react-confetti-explosion';
-//import title from "./title.png";
+import title from "./title.png";
 import red from './pacman-red.png';
 import yellow from './pacman-yellow.png';
+import blue from './pacman-blue.png';
+import pacman from './pacman.gif'
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -30,15 +32,18 @@ function checkDraw(squares){
       return false;
     }
   }
+  for (let i = 0; i < squares.length; i++){
+    document.getElementById(i.toString()).classList.add(squares[i].toLowerCase());
+  }
     return true;
 }
 
-function Square({ id, letter, onSquareClick}) {
+function Square({ id, colour, onSquareClick}) {
   let content;
-  if(letter==="X"){
+  if(colour==="Yellow"){
     content=<img className="squareImage" src={yellow} alt="yellow" onClick={onSquareClick} />
   } 
-  else if (letter==="O"){
+  else if (colour==="Red"){
     content=<img className="squareImage" src={red} alt="red" onClick={onSquareClick} />
   }
   return (
@@ -48,17 +53,17 @@ function Square({ id, letter, onSquareClick}) {
 }
 
 
-function Board({ xIsNext, squares, onPlay}) {
+function Board({ yellowIsNext, squares, onPlay}) {
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]||checkDraw(squares)) {
       return;
     }
     let player;
     const nextSquares = squares.slice();
-    if (xIsNext) {
-      player='X'
+    if (yellowIsNext) {
+      player='Yellow'
     } else {
-      player='O';
+      player='Red';
     }
     nextSquares[i] = player;
     onPlay(nextSquares,player,i);
@@ -76,12 +81,12 @@ function Board({ xIsNext, squares, onPlay}) {
     gameStatus = 'Draw';
   }
   else {
-    gameStatus = 'Next player: ' + (xIsNext ? 'X' : 'O');
+    gameStatus = 'Next player: ' + (yellowIsNext ? 'Yellow' : 'Red');
   }
   const rowCount = 3, colCount = 3;
   return (
     <div>
-      <div className="game-status">{gameStatus}</div>
+      <div className="game-status"><h2>{gameStatus}</h2></div>
       {winner && <ConfettiExplosion />}
       <div>
         {[...new Array(rowCount)].map((x, rowIndex) => {
@@ -89,7 +94,7 @@ function Board({ xIsNext, squares, onPlay}) {
             <div className="board-row" key={rowIndex}>
               {[...new Array(colCount)].map((y, colIndex) => {
                   const position = rowIndex * colCount + colIndex;
-                  return <Square id={position} letter={squares[position]} onSquareClick={() => handleClick(position)} />
+                  return <Square id={position} colour={squares[position]} onSquareClick={() => handleClick(position)} />
                 }
               )}
             </div>
@@ -102,12 +107,11 @@ function Board({ xIsNext, squares, onPlay}) {
 }
 
 export default function Game() {
-  const status = Array(9).fill(null);
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [moveHistory, setMoveHistory] = useState([Array(9).fill(null)]);
   const [currentMove,setCurrentMove] = useState(0);
   const currentSquares = history[currentMove];
-  const xIsNext = currentMove % 2 === 0;
+  const yellowIsNext = currentMove % 2 === 0;
   function handlePlay(nextSquares,player,location) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     setHistory(nextHistory);
@@ -116,15 +120,6 @@ export default function Game() {
     setMoveHistory(nextMoveHistory);
     setCurrentMove(nextHistory.length - 1);
   }
-  function reset() {
-    setCurrentMove(0);
-    setHistory([Array(9).fill(null)]);
-    setMoveHistory([Array(9).fill(null)]);
-    for(var i=0;i<9;i++){
-      document.getElementById(i.toString()).className="square";
-    }
-  }
-
   function jumpTo(nextMove){
     setCurrentMove(nextMove);
     for(var i=0;i<9;i++){
@@ -135,13 +130,13 @@ export default function Game() {
     let description;
     if (move===currentMove){
       description="You are at move "+move;
-      return <p key={"current"}>{description}</p>;
+      return <li key={"current"}>{description}</li>;
     }
     else if(move>0){
       description="Go to move "+move;
     }
     else{
-      description="Go to start of game";
+      description="Reset Game";
     }
     return(
       <li key={move}>
@@ -150,7 +145,7 @@ export default function Game() {
     );
   });
   const moveLocations = moveHistory.map((move, count)=>{
-    var description = "Player "+move[0]+" placed a tile in square "+move[1];
+    var description = move[0]+" selected square "+move[1];
     if(move[0]){
       return(
       <li key={move}>{description}</li>
@@ -159,8 +154,9 @@ export default function Game() {
     
   });
   return (
-    <div>
-      {/*<img src={title} height={"100px"}/>*/}
+    <div className="game-border">
+      <img src={blue} height={"65px"} className="blue-ghost" alt="blue-ghost"/>
+      <img src={pacman} height={"65px"} className="pacman"alt="pacman"/>
       <div className="game">
       
       <div className="game-info">
@@ -168,8 +164,8 @@ export default function Game() {
         <ol>{moveLocations}</ol>
       </div>
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
-        <button onClick={()=>reset()} className="selectMove">Reset Game</button>
+        <img src={title} height={"60px"} className="title"/>
+        <Board yellowIsNext={yellowIsNext} squares={currentSquares} onPlay={handlePlay}/>
       </div>
       <div className="game-info">
         <h2>Previous Moves</h2>
@@ -177,7 +173,7 @@ export default function Game() {
       </div>
       
     </div>
-
+    
     </div>
     
   );
