@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import React from 'react';
 import ConfettiExplosion from 'react-confetti-explosion';
-
+//import title from "./title.png";
+import red from './pacman-red.png';
+import yellow from './pacman-yellow.png';
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -31,40 +33,22 @@ function checkDraw(squares){
     return true;
 }
 
-function setTextColor(letter,status){
-  if(status){
-    return "white";
-  }
+function Square({ id, letter, onSquareClick}) {
+  let content;
   if(letter==="X"){
-    return "#ffc09f";
+    content=<img className="squareImage" src={yellow} alt="yellow" onClick={onSquareClick} />
+  } 
+  else if (letter==="O"){
+    content=<img className="squareImage" src={red} alt="red" onClick={onSquareClick} />
   }
-  else{
-    return "#79addc";
-  }
-}
-
-function setBackgroundColor(status){
-  if(status==='win'){
-    return "#3deb94";
-  }
-  else if (status==='X'){
-    return "#ffc09f";
-  }
-  else if (status==='O'){
-    return "#79addc";
-  }
-  return "white";
-}
-
-function Square({ id, letter, onSquareClick, status }) {
   return (
-    <button id={id} className="square" onClick={onSquareClick} style={{ background: setBackgroundColor(status), color: setTextColor(letter,status) }}>
-      {letter}
+    <button id={id} className="square" onClick={onSquareClick}>{content}
     </button>
   );
 }
 
-function Board({ xIsNext, squares, onPlay,status}) {
+
+function Board({ xIsNext, squares, onPlay}) {
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]||checkDraw(squares)) {
       return;
@@ -84,13 +68,12 @@ function Board({ xIsNext, squares, onPlay,status}) {
   let gameStatus;
   if (winner) {
     for(var i=0;i<winner.length;i++){
-      status[winner[i]]='win';
+      document.getElementById(winner[i].toString()).classList.add('win');
     }
     gameStatus = 'Winner: ' + squares[winner[0]]; 
   } 
   else if(draw){
     gameStatus = 'Draw';
-    status=squares;
   }
   else {
     gameStatus = 'Next player: ' + (xIsNext ? 'X' : 'O');
@@ -105,8 +88,8 @@ function Board({ xIsNext, squares, onPlay,status}) {
           return (
             <div className="board-row" key={rowIndex}>
               {[...new Array(colCount)].map((y, colIndex) => {
-                  const position = rowIndex * colCount + colIndex
-                  return <Square id={'square'+{position}} letter={squares[position]} onSquareClick={() => handleClick(position)} status={status[position]} />
+                  const position = rowIndex * colCount + colIndex;
+                  return <Square id={position} letter={squares[position]} onSquareClick={() => handleClick(position)} />
                 }
               )}
             </div>
@@ -133,9 +116,20 @@ export default function Game() {
     setMoveHistory(nextMoveHistory);
     setCurrentMove(nextHistory.length - 1);
   }
+  function reset() {
+    setCurrentMove(0);
+    setHistory([Array(9).fill(null)]);
+    setMoveHistory([Array(9).fill(null)]);
+    for(var i=0;i<9;i++){
+      document.getElementById(i.toString()).className="square";
+    }
+  }
 
   function jumpTo(nextMove){
     setCurrentMove(nextMove);
+    for(var i=0;i<9;i++){
+      document.getElementById(i.toString()).className="square";
+    }
   }
   const moves = history.map((squares, move)=>{
     let description;
@@ -165,19 +159,27 @@ export default function Game() {
     
   });
   return (
-    <div className="game">
+    <div>
+      {/*<img src={title} height={"100px"}/>*/}
+      <div className="game">
+      
       <div className="game-info">
         <h2>Move History</h2>
         <ol>{moveLocations}</ol>
       </div>
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} status={status}/>
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay}/>
+        <button onClick={()=>reset()} className="selectMove">Reset Game</button>
       </div>
       <div className="game-info">
+        <h2>Previous Moves</h2>
         <ol>{moves}</ol>
       </div>
       
     </div>
+
+    </div>
+    
   );
 }
 
