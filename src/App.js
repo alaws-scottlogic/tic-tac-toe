@@ -5,6 +5,7 @@ import title from "./title.png";
 import red from './pacman-red.png';
 import yellow from './pacman-yellow.png';
 import blue from './pacman-blue.png';
+import pink from './pacman-pink.png';
 import pacman from './pacman.gif'
 function calculateWinner(squares) {
   const lines = [
@@ -32,19 +33,29 @@ function checkDraw(squares){
       return false;
     }
   }
-  for (let i = 0; i < squares.length; i++){
-    document.getElementById(i.toString()).classList.add(squares[i].toLowerCase());
-  }
     return true;
 }
 
-function Square({ id, colour, onSquareClick}) {
-  let content;
-  if(colour==="Yellow"){
+function Square({ id, player, onSquareClick, colours}) {
+  let colour,content;
+  if(player==="Player1"){
+    colour=colours[0];
+  }
+  else if(player==="Player2"){
+    colour=colours[1];
+  }
+  
+  if(colour==="yellow"){
     content=<img className="squareImage" src={yellow} alt="yellow" onClick={onSquareClick} />
   } 
-  else if (colour==="Red"){
+  else if (colour==="red"){
     content=<img className="squareImage" src={red} alt="red" onClick={onSquareClick} />
+  }
+  else if(colour==="blue"){
+    content=<img className="squareImage" src={blue} alt="blue" onClick={onSquareClick} />
+  } 
+  else if (colour==="pink"){
+    content=<img className="squareImage" src={pink} alt="pink" onClick={onSquareClick} />
   }
   return (
     <button id={id} className="square" onClick={onSquareClick}>{content}
@@ -53,23 +64,24 @@ function Square({ id, colour, onSquareClick}) {
 }
 
 
-function Board({ yellowIsNext, squares, onPlay}) {
+function Board({ player1IsNext, squares, onPlay, colours}) {
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]||checkDraw(squares)) {
       return;
     }
     let player;
     const nextSquares = squares.slice();
-    if (yellowIsNext) {
-      player='Yellow'
+    if (player1IsNext) {
+      player='Player1'
     } else {
-      player='Red';
+      player='Player2';
     }
     nextSquares[i] = player;
     onPlay(nextSquares,player,i);
   }
-  const draw = checkDraw(squares);
   const winner = calculateWinner(squares);
+  const draw = checkDraw(squares);
+  
   let gameStatus;
   if (winner) {
     for(var i=0;i<winner.length;i++){
@@ -78,10 +90,13 @@ function Board({ yellowIsNext, squares, onPlay}) {
     gameStatus = 'Winner: ' + squares[winner[0]]; 
   } 
   else if(draw){
-    gameStatus = 'Draw';
+    gameStatus = 'It\'s a Draw';
+    for (let i = 0; i < squares.length; i++){
+      document.getElementById(i.toString()).classList.add(squares[i].toLowerCase());
+    }
   }
   else {
-    gameStatus = 'Next player: ' + (yellowIsNext ? 'Yellow' : 'Red');
+    gameStatus = 'Next player: ' + (player1IsNext ? 'Player1' : 'Player2');
   }
   const rowCount = 3, colCount = 3;
   return (
@@ -94,7 +109,7 @@ function Board({ yellowIsNext, squares, onPlay}) {
             <div className="board-row" key={rowIndex}>
               {[...new Array(colCount)].map((y, colIndex) => {
                   const position = rowIndex * colCount + colIndex;
-                  return <Square id={position} colour={squares[position]} onSquareClick={() => handleClick(position)} />
+                  return <Square id={position} player={squares[position]} onSquareClick={() => handleClick(position)} colours={colours} />
                 }
               )}
             </div>
@@ -110,8 +125,15 @@ export default function Game() {
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [moveHistory, setMoveHistory] = useState([Array(9).fill(null)]);
   const [currentMove,setCurrentMove] = useState(0);
+  const [colours,setColours] = useState(['yellow','red']);
   const currentSquares = history[currentMove];
-  const yellowIsNext = currentMove % 2 === 0;
+  const player1IsNext = currentMove % 2 === 0;
+  function pickColour(){
+    var array = ['red','yellow','pink','blue']
+    var shuffled = array.sort(function(){ return 0.5 - Math.random() });
+    var selected = shuffled.slice(0,2);
+    setColours(selected);
+  }
   function handlePlay(nextSquares,player,location) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     setHistory(nextHistory);
@@ -151,12 +173,26 @@ export default function Game() {
       <li key={move}>{description}</li>
     );
     }
-    
+    ;
   });
+  var player1Colour= "Player 1: "+colours[0];
+  var player2Colour= "Player 2: "+colours[1];
   return (
     <div className="game-border">
-      <img src={blue} height={"65px"} className="blue-ghost" alt="blue-ghost"/>
+      <img src={blue} height={"65px"} alt="blue-ghost" className='blue-ghost'/>
       <img src={pacman} height={"65px"} className="pacman"alt="pacman"/>
+      <div class="food">
+        <div class="pacman__food"></div>
+        <div class="pacman__food"></div>
+        <div class="pacman__food"></div>
+        <div class="pacman__food"></div>
+        <div class="pacman__food"></div>
+        <div class="pacman__food"></div>
+        <div class="pacman__food"></div>
+        <div class="pacman__food_end"></div>
+      </div>
+      
+      
       <div className="game">
       
       <div className="game-info">
@@ -165,7 +201,11 @@ export default function Game() {
       </div>
       <div className="game-board">
         <img src={title} height={"60px"} className="title"/>
-        <Board yellowIsNext={yellowIsNext} squares={currentSquares} onPlay={handlePlay}/>
+        <Board player1IsNext={player1IsNext} squares={currentSquares} onPlay={handlePlay} colours={colours}/>
+        <button className='selectMove' onClick={pickColour}>Change Colours</button>
+        <h2>Current Colours:</h2>
+        <h2>{player1Colour} </h2>
+        <h2>{player2Colour} </h2>
       </div>
       <div className="game-info">
         <h2>Previous Moves</h2>

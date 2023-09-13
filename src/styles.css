@@ -2,6 +2,14 @@
 * {
   box-sizing: border-box;
 }
+@keyframes food{
+  0%{
+    background-color: white;
+  }
+  100%{
+    background-color: black;   
+  }
+}
 @keyframes square-ghost {
   0%{
     left:5%;
@@ -75,14 +83,9 @@
 
 body {
   font-family: sans-serif;
-  margin: 20px;
   padding: 0;
   background-color: black;
   
-}
-#root{
-  margin: 75px;
-
 }
 ol{
   list-style-type: none;
@@ -165,9 +168,9 @@ body {
   color:white;
   width: 80%;
   font: 18px 'Press Start 2P',  cursive;
-  margin: 5px;
-  padding-top:15px;
-  padding-bottom:15px;
+  margin: 3px;
+  padding-top:10px;
+  padding-bottom:10px;
   transition: all 0.2s ease-in-out;
 }
 .selectMove:hover{
@@ -175,6 +178,7 @@ body {
   color:white;
   box-shadow: 0 5px 15px rgba(254, 255, 167, 0.4);
 }
+
 .nextMove{
   position: relative;
   left: 30px;
@@ -185,6 +189,9 @@ body {
   flex-direction: row;
   margin: auto;
   text-align: center;
+  padding: 10px;
+  padding-top: 85px;
+  padding-bottom: 85px;
 }
 .game_squares {
   margin: auto;
@@ -219,7 +226,7 @@ body {
   animation-name: square-ghost;
   animation-duration: 25s;
   animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
+  animation-timing-function: linear;
 }
 .pacman {
   animation-fill-mode: both;
@@ -227,6 +234,36 @@ body {
   animation-name: square;
   animation-duration: 25s;
   animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
+  animation-timing-function: linear;
   animation-delay: 2s;
+}
+.pacman__food {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+  animation:square 25s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.food :nth-child(1) { animation-delay: 0.25s }
+.food :nth-child(2) { animation-delay: 0.5s }
+.food :nth-child(3) { animation-delay: 0.75s }
+.food :nth-child(4) { animation-delay: 1s }
+.food :nth-child(5) { animation-delay: 1.25s }
+.food :nth-child(6) { animation-delay: 1.5s }
+.food :nth-child(7) { animation-delay: 1.75s }
+.pacman__food_end{
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+  animation:square 25s, food 0.4s;
+  animation-fill-mode: both;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-delay: 1.92s;
 }
