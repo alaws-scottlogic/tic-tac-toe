@@ -1,124 +1,28 @@
 import { useState } from 'react';
 import React from 'react';
-import ConfettiExplosion from 'react-confetti-explosion';
-import title from "./title.png";
-import red from './pacman-red.png';
-import yellow from './pacman-yellow.png';
-import blue from './pacman-blue.png';
-import pink from './pacman-pink.png';
-import pacman from './pacman.gif'
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return lines[i];
-    }
-  }
-  return null;
-}
+import Board from './Board';
+import title from "./public/title.png";
+import red from './public/pacman-red.png';
+import yellow from './public/pacman-yellow.png';
+import blue from './public/pacman-blue.png';
+import pink from './public/pacman-pink.png';
+import pacman from './public/pacman.gif'
 
-function checkDraw(squares){
-  for (let i = 0; i < squares.length; i++){
-    if(squares[i]===null){
-      return false;
-    }
-  }
-    return true;
-}
-
-function Square({ id, player, onSquareClick, colours}) {
-  let colour,content;
-  if(player==="Player1"){
-    colour=colours[0];
-  }
-  else if(player==="Player2"){
-    colour=colours[1];
-  }
-  
+export function getGhostImage(colour,className, onSquareClick){
+  let content;
   if(colour==="yellow"){
-    content=<img className="squareImage" src={yellow} alt="yellow" onClick={onSquareClick} />
+    content=<img className={className} src={yellow} alt="yellow" onClick={onSquareClick} />
   } 
   else if (colour==="red"){
-    content=<img className="squareImage" src={red} alt="red" onClick={onSquareClick} />
+    content=<img className={className} src={red} alt="red" onClick={onSquareClick} />
   }
   else if(colour==="blue"){
-    content=<img className="squareImage" src={blue} alt="blue" onClick={onSquareClick} />
+    content=<img className={className} src={blue} alt="blue" onClick={onSquareClick} />
   } 
   else if (colour==="pink"){
-    content=<img className="squareImage" src={pink} alt="pink" onClick={onSquareClick} />
+    content=<img className={className} src={pink} alt="pink" onClick={onSquareClick} />
   }
-  return (
-    <button id={id} className="square" onClick={onSquareClick}>{content}
-    </button>
-  );
-}
-
-
-function Board({ player1IsNext, squares, onPlay, colours}) {
-  function handleClick(i) {
-    if (calculateWinner(squares) || squares[i]||checkDraw(squares)) {
-      return;
-    }
-    let player;
-    const nextSquares = squares.slice();
-    if (player1IsNext) {
-      player='Player1'
-    } else {
-      player='Player2';
-    }
-    nextSquares[i] = player;
-    onPlay(nextSquares,player,i);
-  }
-  const winner = calculateWinner(squares);
-  const draw = checkDraw(squares);
-  
-  let gameStatus;
-  if (winner) {
-    for(var i=0;i<winner.length;i++){
-      document.getElementById(winner[i].toString()).classList.add('win');
-    }
-    gameStatus = 'Winner: ' + squares[winner[0]]; 
-  } 
-  else if(draw){
-    gameStatus = 'It\'s a Draw';
-    for (let i = 0; i < squares.length; i++){
-      document.getElementById(i.toString()).classList.add(squares[i].toLowerCase());
-    }
-  }
-  else {
-    gameStatus = 'Next player: ' + (player1IsNext ? 'Player1' : 'Player2');
-  }
-  const rowCount = 3, colCount = 3;
-  return (
-    <div>
-      <div className="game-status"><h2>{gameStatus}</h2></div>
-      {winner && <ConfettiExplosion />}
-      <div>
-        {[...new Array(rowCount)].map((x, rowIndex) => {
-          return (
-            <div className="board-row" key={rowIndex}>
-              {[...new Array(colCount)].map((y, colIndex) => {
-                  const position = rowIndex * colCount + colIndex;
-                  return <Square id={position} player={squares[position]} onSquareClick={() => handleClick(position)} colours={colours} />
-                }
-              )}
-            </div>
-          )
-        })
-      }
-      </div>
-  </div>
-  );
+  return content;
 }
 
 export default function Game() {
@@ -148,6 +52,7 @@ export default function Game() {
       document.getElementById(i.toString()).className="square";
     }
   }
+  var iconColours=['red','yellow','pink','blue'];
   const moves = history.map((squares, move)=>{
     let description;
     if (move===currentMove){
@@ -160,9 +65,10 @@ export default function Game() {
     else{
       description="Reset Game";
     }
+    var buttonIcon = getGhostImage(iconColours[move%4],"button-icon");
     return(
       <li key={move}>
-        <button className="selectMove" onClick={() => jumpTo(move)}>{description}</button>
+        <button className="select-move" onClick={() => jumpTo(move)}>{buttonIcon}{description}</button>
       </li>
     );
   });
@@ -170,48 +76,46 @@ export default function Game() {
     var description = move[0]+" selected square "+move[1];
     if(move[0]){
       return(
-      <li key={move}>{description}</li>
+      <li key={move} className='move-description'>{description}</li>
     );
-    }
-    ;
+    };
   });
-  var player1Colour= "Player 1: "+colours[0];
-  var player2Colour= "Player 2: "+colours[1];
+  var player1Colour= <h4>Player 1: </h4>
+  var player1Image = getGhostImage(colours[0],"icon");
+  var player2Colour= <h4>Player 2: </h4>;
+  var player2Image = getGhostImage(colours[1],"icon");
   return (
     <div className="game-border">
-      <img src={blue} height={"65px"} alt="blue-ghost" className='blue-ghost'/>
+      <img src={pink} height={"60px"} alt="pink-ghost" className='ghost'/>
       <img src={pacman} height={"65px"} className="pacman"alt="pacman"/>
-      <div class="food">
-        <div class="pacman__food"></div>
-        <div class="pacman__food"></div>
-        <div class="pacman__food"></div>
-        <div class="pacman__food"></div>
-        <div class="pacman__food"></div>
-        <div class="pacman__food"></div>
-        <div class="pacman__food"></div>
-        <div class="pacman__food_end"></div>
+      <div className="food">
+        <div className="pacman-food"></div>
+        <div className="pacman-food"></div>
+        <div className="pacman-food"></div>
+        <div className="pacman-food"></div>
+        <div className="pacman-food"></div>
+        <div className="pacman-food"></div>
+        <div className="pacman-food"></div>
+        <div className="pacman-food-end"></div>
       </div>
-      
-      
+    
       <div className="game">
-      
       <div className="game-info">
-        <h2>Move History</h2>
+      <button className='select-move' onClick={pickColour}>Change Colours</button>
+        <div className='player-colour'>{player1Colour}{player1Image} </div><br></br>
+        <div className='player-colour'>{player2Colour}{player2Image} </div>
+        <h2 className='section-title'>Move History</h2>
         <ol>{moveLocations}</ol>
       </div>
       <div className="game-board">
-        <img src={title} height={"60px"} className="title"/>
+        <img src={title} className="title" alt="title"/>
         <Board player1IsNext={player1IsNext} squares={currentSquares} onPlay={handlePlay} colours={colours}/>
-        <button className='selectMove' onClick={pickColour}>Change Colours</button>
-        <h2>Current Colours:</h2>
-        <h2>{player1Colour} </h2>
-        <h2>{player2Colour} </h2>
+        
       </div>
       <div className="game-info">
-        <h2>Previous Moves</h2>
+        <h2 className='section-itle'>Previous Moves</h2>
         <ol>{moves}</ol>
-      </div>
-      
+      </div>     
     </div>
     
     </div>
