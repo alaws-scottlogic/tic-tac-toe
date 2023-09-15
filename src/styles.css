@@ -8,8 +8,8 @@
   100% { background-position: 0 var(--positionTop), center center; }
 }
 @keyframes move-object{
-  0% { left:0%;}
-  100% {left:100%;}
+  0% { top: 2%; left:0%;}
+  100% { top: 2%;left:100%;}
 }
 @keyframes spin {
   from {transform:rotate(0deg);}
@@ -18,20 +18,16 @@
 
 body {
   --background: black;
-  --dot: #eee;
   --size: 8vmin;
   --halfSize: calc(var(--size) / 2);
   --negativesize: calc(var(--size) * -1);
   --positionTop: calc(5vh - var(--halfSize));
   --timing: 10s;
-
     background-color: var(--background);
-    background-image:  linear-gradient( var(--background),  var(--background)), radial-gradient(var(--dot) 10%, transparent 0);
+    background-image:  linear-gradient( var(--background),  var(--background)), radial-gradient(white 10%, transparent 0);
     background-size: 100vw var(--size), var(--size) var(--size);
     background-repeat: no-repeat, repeat;
     background-position: calc(-100vw - var(--halfSize)) var(--positionTop), 0 0;
-    width: 100vw;
-    height: 100vh;
     padding: 0;
     margin: 0;
     overflow: hidden;
@@ -46,13 +42,13 @@ ol{
 h2 {
   margin-top: 0;
   color: white;
-  font: 1.5vw 'Press Start 2P',  cursive;
+  font: 1.2vw 'Press Start 2P',  cursive;
   text-shadow: 1px 1px 2px red, 0 0 1em blue, 0 0 0.2em blue;
 }
 h4{
   margin-top: 15px;
   color: white;
-  font: 1.5vw 'Press Start 2P',  cursive;
+  font: 1.2vw 'Press Start 2P',  cursive;
   text-shadow: 1px 1px 2px red, 0 0 1em blue, 0 0 0.2em blue;
 }
 
@@ -61,19 +57,9 @@ ul {
 }
 li{
   color:white;
-  padding: 5px;
-  font: 18px 'Press Start 2P';
+  padding: 0.2vw;
+  font: 1vw 'Press Start 2P';
   text-shadow: 1px 1px 2px red, 0 0 1em blue, 0 0 0.2em blue;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: sans-serif;
-  margin: 20px;
-  padding: 0;
 }
 
 .square {
@@ -102,9 +88,7 @@ body {
     border: 3px solid orange;
     box-shadow: 0 5px 30px #f8e09c;
 	}
-.move-description{
-  padding:10px;
-}
+
 .square-image {
     height: 75%;
     margin: auto;
@@ -116,18 +100,17 @@ body {
   transform: scaleX(-1);
 }
 .icon {
-  height: 40px;
-  margin-left: 10px;
-  margin-right: 10px;
-  width: 40px;
+  height: 2.5vw;
+  padding-top: 0.25vw;
+  width: 2.5vw;
 }
 .icon:hover{
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
 }
 .button-icon {
-  height: 30px;
-  width: 30px;
+  height: 1.75vw;
+  width: 1.75vw;
   margin-left: 10px;
   margin-right: 10px;
   float: center;
@@ -139,6 +122,9 @@ body {
 .player-colour{
   display: inline-flex;
 }
+.board-container {
+  position: fixed;
+}
 .board-row:after {
   clear: both;
   content: '';
@@ -146,7 +132,7 @@ body {
 }
 .title{
   margin: auto;
-  width:75%;
+  height:3vw;
   background-color: black;
 }
 .title:hover{
@@ -156,9 +142,8 @@ body {
 .section-title{
   border: 3px solid #2163de;
   background: black;
-  margin: 10px;
-  padding-top:10px;
-  padding-bottom:10px;
+  margin: 0.5vw;
+  padding: 0.3vw;
   width: 80%;
   text-align: center;
   margin: auto;
@@ -168,23 +153,22 @@ body {
   background-color: black;
   color:white;
   width: 80%;
-  font: 18px 'Press Start 2P',  cursive;
-  margin: 3px;
-  padding-top:5px;
-  padding-bottom:10px;
+  font: 1.1vw 'Press Start 2P',  cursive;
+  margin: 0.2vw;
+  padding: 0.1vw;
   transition: all 0.2s ease-in-out;
+  text-shadow: 1px 1px 2px red, 0 0 1em blue, 0 0 0.5em blue;
 }
 .select-colour{
   border: 3px solid #2163de;
   background-color: black;
   color:white;
   width: 80%;
-  font: 1.5vw 'Press Start 2P',  cursive;
-  margin: 3px;
-  padding-top:5px;
-  padding-bottom:10px;
+  font: 1.2vw 'Press Start 2P',  cursive;
+  padding: 0.1vw;
+  margin: 0.2vw;
   transition: all 0.2s ease-in-out;
-  text-shadow: 1px 1px 2px red, 0 0 1em blue, 0 0 0.2em blue;
+  text-shadow: 1px 1px 2px red, 0 0 1em blue, 0 0 1em blue;
 }
 .select-move:hover{
   background:#e8d04d;
@@ -193,16 +177,14 @@ body {
 }
 .game {
   display: flex;
-  flex-direction: row;
   margin: auto;
   text-align: center;
-  padding: 10px;
-  padding-top: 85px;
-  padding-bottom: 85px;
+  padding-top: 80px;
 }
 .game-board {
   margin: auto;
   width: 40%;
+  float:left;
 }
 
 .game-status{
@@ -214,6 +196,7 @@ body {
 .game-info {
   margin-left: 20px;
   width: 30%;
+  float:left;
 }
 
 .win{
@@ -227,15 +210,35 @@ body {
 }
 .red{
   background-color:#ff60606b;
+  animation-name: spin;
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
+  animation-timing-function: linear;
+  animation-delay: 0.25s;
 }
 .yellow{
   background-color:#fffd786b;
+  animation-name: spin;
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
+  animation-timing-function: linear;
+  animation-delay: 0.25s;
 }
 .pink{
   background-color:#fface17c;
+  animation-name: spin;
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
+  animation-timing-function: linear;
+  animation-delay: 0.25s;
 }
 .blue{
   background-color:#afe6ff7c;
+  animation-name: spin;
+  animation-duration: 0.5s;
+  animation-iteration-count: 1;
+  animation-timing-function: linear;
+  animation-delay: 0.25s;
 }
 .ghost-pink{
   position: absolute;
