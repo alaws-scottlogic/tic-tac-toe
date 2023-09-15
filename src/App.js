@@ -74,9 +74,13 @@ export default function Game() {
   });
   const moveLocations = moveHistory.map((move, count)=>{
     var description = move[0]+" selected square "+move[1];
+    let colour = colours[1];
+    if(move[0]==='Player1'){
+      colour=colours[0];
+    }
     if(move[0]){
       return(
-      <li key={move} className='move-description'>{description}</li>
+      <li key={move} className='move-description'>{getGhostImage(colour,"button-icon")}{description}</li>
     );
     };
   });
@@ -86,22 +90,12 @@ export default function Game() {
   var player2Image = getGhostImage(colours[1],"icon");
   return (
     <div className="game-border">
-      <img src={pink} height={"60px"} alt="pink-ghost" className='ghost'/>
+      <img src={pink} height={"60px"} alt="pink-ghost" className='ghost-pink'/>
+      <img src={blue} height={"65px"} alt="pink-ghost" className='ghost-blue'/>
       <img src={pacman} height={"65px"} className="pacman"alt="pacman"/>
-      <div className="food">
-        <div className="pacman-food"></div>
-        <div className="pacman-food"></div>
-        <div className="pacman-food"></div>
-        <div className="pacman-food"></div>
-        <div className="pacman-food"></div>
-        <div className="pacman-food"></div>
-        <div className="pacman-food"></div>
-        <div className="pacman-food-end"></div>
-      </div>
-    
       <div className="game">
       <div className="game-info">
-      <button className='select-move' onClick={pickColour}>Change Colours</button>
+      <button className='select-colour' onClick={pickColour}>Change Colours</button>
         <div className='player-colour'>{player1Colour}{player1Image} </div><br></br>
         <div className='player-colour'>{player2Colour}{player2Image} </div>
         <h2 className='section-title'>Move History</h2>
@@ -113,7 +107,7 @@ export default function Game() {
         
       </div>
       <div className="game-info">
-        <h2 className='section-itle'>Previous Moves</h2>
+        <h2 className='section-title'>Previous Moves</h2>
         <ol>{moves}</ol>
       </div>     
     </div>

@@ -2,83 +2,14 @@
 * {
   box-sizing: border-box;
 }
-@keyframes food{
-  0%{
-    background-color: white;
-  }
-  100%{
-    background-color: black;   
-  }
+
+@keyframes move {
+  0% { background-position: calc(-100vw - var(--halfSize)) var(--positionTop), center center; }
+  100% { background-position: 0 var(--positionTop), center center; }
 }
-@keyframes square-ghost {
-  0%{
-    left:2%;
-    top:95%;
-    transform:translate(-50%, -50%);   
-  }
-  25%,26%{
-    left:2%;    
-    top:5%;
-    transform:translate(-50%, -50%);    
-  }
-  50%,51%{
-    left: 97%;
-    top:5%;
-    transform:translate(-50%, -50%);
-  }
-  75%{
-    left: 97%;
-    top:95%;
-    transform:translate(-50%, -50%);              
-  }
-  76%{
-    left: 97%;
-    top:95%;    
-    transform:translate(-50%, -50%) rotateY(-180deg);        
-  }
-  100%{
-    left:2%;
-    top:95%;
-    transform:translate(-50%, -50%) rotateY(-180deg);        
-  }
-}
-@keyframes square {
-  0%{
-    left:2%;
-    top:95%;
-    transform:translate(-50%, -50%) rotate(-90deg);    
-  }
-  25%,26%{
-    left:2%;    
-    top:5%;
-    transform:translate(-50%, -50%) rotate(-90deg);    
-  }
-  26%{
-    transform:translate(-50%, -50%) rotate(0deg);        
-  }  
-  50%,51%{
-    left: 97%;
-    top:5%;
-    transform:translate(-50%, -50%) rotate(0deg);    
-  }
-  51%{
-    transform:translate(-50%, -50%) rotate(90deg);                
-  }    
-  75%{
-    left: 97%;
-    top:95%;
-    transform:translate(-50%, -50%) rotate(90deg);                
-  }
-  76%{
-    left: 97%;
-    top:95%;    
-    transform:translate(-50%, -50%) rotateY(-180deg);        
-  }
-  100%{
-    left:2%;
-    top:95%;
-    transform:translate(-50%, -50%) rotateY(-180deg);        
-  }
+@keyframes move-object{
+  0% { left:0%;}
+  100% {left:100%;}
 }
 @keyframes spin {
   from {transform:rotate(0deg);}
@@ -86,9 +17,26 @@
 }
 
 body {
-  font-family: sans-serif;
-  padding: 0;
-  background-color: black;
+  --background: black;
+  --dot: #eee;
+  --size: 8vmin;
+  --halfSize: calc(var(--size) / 2);
+  --negativesize: calc(var(--size) * -1);
+  --positionTop: calc(5vh - var(--halfSize));
+  --timing: 10s;
+
+    background-color: var(--background);
+    background-image:  linear-gradient( var(--background),  var(--background)), radial-gradient(var(--dot) 10%, transparent 0);
+    background-size: 100vw var(--size), var(--size) var(--size);
+    background-repeat: no-repeat, repeat;
+    background-position: calc(-100vw - var(--halfSize)) var(--positionTop), 0 0;
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    animation: move var(--timing) linear infinite;
+    animation-delay: 1.75s;
   
 }
 ol{
@@ -98,12 +46,14 @@ ol{
 h2 {
   margin-top: 0;
   color: white;
-  font: 18px 'Press Start 2P',  cursive;
+  font: 1.5vw 'Press Start 2P',  cursive;
+  text-shadow: 1px 1px 2px red, 0 0 1em blue, 0 0 0.2em blue;
 }
 h4{
   margin-top: 15px;
   color: white;
-  font: 20px 'Press Start 2P',  cursive;
+  font: 1.5vw 'Press Start 2P',  cursive;
+  text-shadow: 1px 1px 2px red, 0 0 1em blue, 0 0 0.2em blue;
 }
 
 ul {
@@ -113,6 +63,7 @@ li{
   color:white;
   padding: 5px;
   font: 18px 'Press Start 2P';
+  text-shadow: 1px 1px 2px red, 0 0 1em blue, 0 0 0.2em blue;
 }
 
 * {
@@ -135,13 +86,13 @@ body {
   font-size: 1px;
   font-weight: bold;
   line-height: 34px;
-  height: 170px;
+  height: 9vw;
   margin: auto;
   margin-right: -1px;
   margin-top: -1px;
   padding: 0;
   text-align: center;
-  width: 25%;
+  width: 9vw;
   transition: all 400ms cubic-bezier(.47,1.64,.41,.8);
 }
 .square:hover {
@@ -196,6 +147,7 @@ body {
 .title{
   margin: auto;
   width:75%;
+  background-color: black;
 }
 .title:hover{
   transform: scale(1.2);
@@ -203,6 +155,7 @@ body {
 }
 .section-title{
   border: 3px solid #2163de;
+  background: black;
   margin: 10px;
   padding-top:10px;
   padding-bottom:10px;
@@ -220,6 +173,18 @@ body {
   padding-top:5px;
   padding-bottom:10px;
   transition: all 0.2s ease-in-out;
+}
+.select-colour{
+  border: 3px solid #2163de;
+  background-color: black;
+  color:white;
+  width: 80%;
+  font: 1.5vw 'Press Start 2P',  cursive;
+  margin: 3px;
+  padding-top:5px;
+  padding-bottom:10px;
+  transition: all 0.2s ease-in-out;
+  text-shadow: 1px 1px 2px red, 0 0 1em blue, 0 0 0.2em blue;
 }
 .select-move:hover{
   background:#e8d04d;
@@ -243,7 +208,6 @@ body {
 .game-status{
   color: white;
   font-size:20px;
-  padding: 10px;
   display: inline-flex;
 }
 
@@ -273,50 +237,27 @@ body {
 .blue{
   background-color:#afe6ff7c;
 }
-.ghost {
+.ghost-pink{
   position: absolute;
-  animation-name: square-ghost;
-  animation-duration: 25s;
+  animation-name: move-object;
+  animation-duration: 10s;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
+}
+.ghost-blue{
+  position: absolute;
+  animation-name: move-object;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-delay: 0.5s;
 }
 .pacman {
   animation-fill-mode: both;
   position: absolute;
-  animation-name: square;
-  animation-duration: 25s;
+  animation-name: move-object;
+  animation-duration: 10s;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
-  animation-delay: 2s;
-}
-.pacman-food {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background: #fff;
-  border-radius: 50%;
-  animation:square 25s;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-  animation-fill-mode: both;
-}
-
-.food :nth-child(1) { animation-delay: 0.25s }
-.food :nth-child(2) { animation-delay: 0.5s }
-.food :nth-child(3) { animation-delay: 0.75s }
-.food :nth-child(4) { animation-delay: 1s }
-.food :nth-child(5) { animation-delay: 1.25s }
-.food :nth-child(6) { animation-delay: 1.5s }
-.food :nth-child(7) { animation-delay: 1.75s }
-.pacman-food-end{
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background: #fff;
-  border-radius: 50%;
-  animation:square 25s, food 0.4s;
-  animation-fill-mode: both, both;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear;
-  animation-delay: 1.92s,1.92s;
+  animation-delay: 2s
 }
